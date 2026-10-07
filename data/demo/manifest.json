@@ -1,0 +1,207 @@
+{
+  "sun_angle_variation": {
+    "source_path": "data/demo/sun_angle_variation_source.png",
+    "reference_path": "data/demo/sun_angle_variation_reference.png",
+    "ground_truth": {
+      "is_demonstration_data": true,
+      "matrix": [
+        [
+          1.0397814512252808,
+          0.1461317539215088,
+          -35.593788146972656
+        ],
+        [
+          -0.1461317539215088,
+          1.0397814512252808,
+          19.225671768188477
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "scale": 1.05,
+      "rotation_deg": 8.0,
+      "translation": [
+        12.0,
+        -8.0
+      ],
+      "shear": 0.0,
+      "sun_ref": {
+        "azimuth": 315.0,
+        "elevation": 50.0
+      },
+      "sun_src": {
+        "azimuth": 270.0,
+        "elevation": 35.0
+      },
+      "sun_elevation_diff": 15.0,
+      "sun_azimuth_diff": 45.0
+    }
+  },
+  "scale_variation_2x": {
+    "source_path": "data/demo/scale_variation_2x_source.png",
+    "reference_path": "data/demo/scale_variation_2x_reference.png",
+    "ground_truth": {
+      "is_demonstration_data": true,
+      "matrix": [
+        [
+          1.5454813241958618,
+          0.4141104817390442,
+          -230.65550231933594
+        ],
+        [
+          -0.4141104817390442,
+          1.5454813241958618,
+          -13.630937576293945
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "scale": 1.6,
+      "rotation_deg": 15.0,
+      "translation": [
+        15.0,
+        20.0
+      ],
+      "shear": 0.0,
+      "sun_ref": {
+        "azimuth": 315.0,
+        "elevation": 45.0
+      },
+      "sun_src": {
+        "azimuth": 300.0,
+        "elevation": 40.0
+      },
+      "sun_elevation_diff": 5.0,
+      "sun_azimuth_diff": 15.0
+    }
+  },
+  "rotation_viewpoint": {
+    "source_path": "data/demo/rotation_viewpoint_source.png",
+    "reference_path": "data/demo/rotation_viewpoint_reference.png",
+    "ground_truth": {
+      "is_demonstration_data": true,
+      "matrix": [
+        [
+          0.9010672569274902,
+          0.7109341025352478,
+          -126.19233703613281
+        ],
+        [
+          -0.6309340596199036,
+          0.9010672569274902,
+          171.8459014892578
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "scale": 1.1,
+      "rotation_deg": 35.0,
+      "translation": [
+        10.0,
+        -15.0
+      ],
+      "shear": 0.08,
+      "sun_ref": {
+        "azimuth": 315.0,
+        "elevation": 45.0
+      },
+      "sun_src": {
+        "azimuth": 330.0,
+        "elevation": 40.0
+      },
+      "sun_elevation_diff": 5.0,
+      "sun_azimuth_diff": 15.0
+    }
+  },
+  "subpixel_verification": {
+    "source_path": "data/demo/subpixel_verification_source.png",
+    "reference_path": "data/demo/subpixel_verification_reference.png",
+    "ground_truth": {
+      "is_demonstration_data": true,
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          10.0
+        ],
+        [
+          -0.0,
+          1.0,
+          10.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "scale": 1.0,
+      "rotation_deg": 0.0,
+      "translation": [
+        10.0,
+        10.0
+      ],
+      "shear": 0.0,
+      "sun_ref": {
+        "azimuth": 315.0,
+        "elevation": 45.0
+      },
+      "sun_src": {
+        "azimuth": 315.0,
+        "elevation": 45.0
+      },
+      "sun_elevation_diff": 0.0,
+      "sun_azimuth_diff": 0.0
+    }
+  },
+  "cross_sensor_multimodal": {
+    "source_path": "data/demo/cross_sensor_multimodal_source.png",
+    "reference_path": "data/demo/cross_sensor_multimodal_reference.png",
+    "ground_truth": {
+      "is_demonstration_data": true,
+      "matrix": [
+        [
+          1.320499300956726,
+          0.280680775642395,
+          -138.90208435058594
+        ],
+        [
+          -0.280680775642395,
+          1.320499300956726,
+          -20.193531036376953
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "scale": 1.35,
+      "rotation_deg": 12.0,
+      "translation": [
+        15.0,
+        -10.0
+      ],
+      "shear": 0.0,
+      "sun_ref": {
+        "azimuth": 315.0,
+        "elevation": 50.0
+      },
+      "sun_src": {
+        "azimuth": 280.0,
+        "elevation": 35.0
+      },
+      "sun_elevation_diff": 15.0,
+      "sun_azimuth_diff": 35.0
+    }
+  }
+}

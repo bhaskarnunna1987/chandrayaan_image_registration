@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chandrayaan-2 Multi-Modal Lunar Image Registration | ISRO Space Technology</title>
+  <meta name="description" content="Sub-pixel accurate, Sun angle and scale invariant multi-modal lunar image correspondence system for Chandrayaan-2 (OHRC, TMC, IIRS) and lunar reference imagery." />
+
+  <!-- Google Fonts: Space Grotesk & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Dashboard Stylesheet -->
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+<body>
+
+  <!-- Top Mission Control Header -->
+  <header class="mission-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="isro-badge">
+          <i class="fa-solid fa-satellite"></i> ISRO SPACE TECH
+        </div>
+        <div class="brand-title">
+          <h1>
+            Chandrayaan-2 Multi-Modal Lunar Registration
+            <span class="ps-tag">[OHRC &bull; TMC &bull; IIRS]</span>
+          </h1>
+          <span class="brand-subtitle">Sun Angle &amp; Scale Invariant Correspondence Engine &bull; Sub-Pixel Photogrammetry</span>
+        </div>
+      </div>
+
+      <div class="telemetry-pills">
+        <div class="pill active">
+          <span class="pulse-dot"></span>
+          <span>PIPELINE READY</span>
+        </div>
+        <div class="pill">
+          <i class="fa-solid fa-microchip"></i>
+          <span>CPU / GPU ACCEL</span>
+        </div>
+        <div class="pill">
+          <i class="fa-solid fa-moon"></i>
+          <span>OHRC &bull; TMC &bull; IIRS</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Watermark Banner for Demonstration Data -->
+  <div class="watermark-banner" id="watermarkBanner">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <span>DEMONSTRATION DATA: Procedural Lunar DEM rendered with controlled solar vectors &amp; ground-truth transformation.</span>
+  </div>
+
+  <!-- Main Mission Control Dashboard Grid -->
+  <main class="dashboard-grid">
+
+    <!-- LEFT COLUMN: Mission Parameters & Controls -->
+    <aside class="control-section">
+
+      <!-- Benchmark Demo Selector Card -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-flask-vial"></i> Benchmark Test Suites</span>
+          <span class="badge-demo">DEMO MODE</span>
+        </div>
+        <div class="benchmark-box">
+          <div class="form-group">
+            <label class="form-label" for="demoCaseSelect">Select Challenge Scenario:</label>
+            <select id="demoCaseSelect" class="form-select"></select>
+          </div>
+          <div class="case-desc" id="demoCaseDesc">Loading benchmark scenario...</div>
+        </div>
+      </div>
+
+      <!-- Input Imagery & Custom Upload Card -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-images"></i> Input Lunar Imagery</span>
+          <i class="fa-solid fa-upload"></i>
+        </div>
+
+        <div class="upload-row">
+          <div class="upload-slot" id="slotSrc" title="Upload custom source image (PNG, JPG, TIFF)">
+            <i class="fa-solid fa-cloud-arrow-up text-cyan"></i>
+            <span class="slot-title">SOURCE</span>
+            <span class="slot-hint">Click to Upload (PNG/JPG/TIFF)</span>
+            <img id="srcThumb" class="thumb-preview" alt="Source Preview" />
+            <input type="file" id="fileInputSrc" accept="image/*,.tif,.tiff" style="display: none;" />
+          </div>
+
+          <div class="upload-slot" id="slotRef" title="Upload custom reference image (PNG, JPG, TIFF)">
+            <i class="fa-solid fa-cloud-arrow-up text-orange"></i>
+            <span class="slot-title">REFERENCE</span>
+            <span class="slot-hint">Click to Upload (PNG/JPG/TIFF)</span>
+            <img id="refThumb" class="thumb-preview" alt="Reference Preview" />
+            <input type="file" id="fileInputRef" accept="image/*,.tif,.tiff" style="display: none;" />
+          </div>
+        </div>
+
+        <button id="btnResetImages" class="btn-secondary" style="margin-top: 0.5rem; font-size: 0.75rem; padding: 0.4rem;" title="Clear custom uploads and restore active demo scenario">
+          <i class="fa-solid fa-rotate-left"></i> Reset to Selected Demo Scenario
+        </button>
+      </div>
+
+      <!-- Pipeline Configuration & Algorithm Tuning Card -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-sliders"></i> Algorithm Configuration</span>
+          <i class="fa-solid fa-gear"></i>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <label class="form-label" for="selectDetector">Feature Detector &amp; Descriptor:</label>
+          <select id="selectDetector" class="form-select">
+            <option value="SIFT" selected>SIFT (Lunar-Tuned Octave Scale-Space)</option>
+            <option value="AKAZE">AKAZE (Non-Linear FED Scale-Space)</option>
+          </select>
+        </div>
+
+        <div class="upload-row" style="margin-bottom: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label" for="selectSensorSrc">Src Modality:</label>
+            <select id="selectSensorSrc" class="form-select">
+              <option value="OHRC" selected>OHRC (0.25m)</option>
+              <option value="TMC">TMC (5m)</option>
+              <option value="IIRS">IIRS (Spectral)</option>
+              <option value="LRO_NAC">LRO NAC</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="selectSensorRef">Ref Modality:</label>
+            <select id="selectSensorRef" class="form-select">
+              <option value="TMC" selected>TMC (5m)</option>
+              <option value="OHRC">OHRC (0.25m)</option>
+              <option value="LRO_NAC">LRO NAC</option>
+              <option value="GENERIC">Generic</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <label class="form-label" for="selectModel">Geometric Transformation Model:</label>
+          <select id="selectModel" class="form-select">
+            <option value="AUTO" selected>AUTO (Adaptive Stability Selection)</option>
+            <option value="AFFINE">Affine (6 DOF - Scale, Shear, Rotation)</option>
+            <option value="SIMILARITY">Similarity (4 DOF - Scale, Rotation)</option>
+            <option value="HOMOGRAPHY">Homography (8 DOF - Projective)</option>
+          </select>
+        </div>
+
+        <!-- Invariance Toggles -->
+        <div class="switch-group">
+          <div>
+            <div class="switch-label">Homomorphic Solar Filter</div>
+            <div class="switch-subtext">Attenuates solar angle gradients</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleHomomorphic" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-group">
+          <div>
+            <div class="switch-label">Multi-Scale Pyramids</div>
+            <div class="switch-subtext">Handles large resolution jumps</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleMultiscale" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-group">
+          <div>
+            <div class="switch-label">Structural Gradient Mode</div>
+            <div class="switch-subtext">For extreme contrast inversions</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleStructural" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Slider Parameters -->
+        <div class="form-group" style="margin-top: 0.5rem;">
+          <div class="form-label">
+            <span>Lowe's Ratio Cutoff:</span>
+            <span id="ratioThreshVal" class="mono text-cyan">0.75</span>
+          </div>
+          <input type="range" id="inputRatioThresh" class="range-slider" min="0.60" max="0.85" step="0.01" value="0.75" />
+        </div>
+
+        <div class="form-group" style="margin-top: 0.5rem;">
+          <div class="form-label">
+            <span>Spatial ANMS Grid:</span>
+            <span id="gridSizeVal" class="mono text-cyan">8x8</span>
+          </div>
+          <input type="range" id="inputGridSize" class="range-slider" min="4" max="12" step="2" value="8" />
+        </div>
+
+        <!-- Run Pipeline Action -->
+        <div style="margin-top: 1.25rem;">
+          <button id="btnRunPipeline" class="btn-primary" id="btnExecute">
+            <i class="fa-solid fa-play"></i> Run Registration Pipeline
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CENTER COLUMN: Interactive Viewports -->
+    <section class="viewports-container">
+
+      <!-- Viewport Navigation Tabs -->
+      <div class="view-tabs">
+        <button id="tabMatches" class="tab-btn active">
+          <i class="fa-solid fa-network-wired"></i> Correspondences &amp; Spatial Grid
+        </button>
+        <button id="tabRegistration" class="tab-btn">
+          <i class="fa-solid fa-layer-group"></i> Registration Result &amp; Composites
+        </button>
+      </div>
+
+      <!-- SECTION 1: Matches & Spatial Grid Canvas -->
+      <div id="matchesSection" class="card viewport-card">
+        <div class="viewer-header">
+          <div class="viewer-title">
+            <i class="fa-solid fa-arrows-split-up-and-left text-cyan"></i>
+            <span>Multi-Modal Tie Points &amp; Coverage-Aware Grid</span>
+          </div>
+
+          <div class="viewer-controls">
+            <label class="pill" style="cursor: pointer;">
+              <input type="checkbox" id="toggleSpatialGrid" style="margin-right: 4px;" />
+              <span>8x8 Spatial Grid</span>
+            </label>
+            <label class="pill" style="cursor: pointer;">
+              <input type="checkbox" id="toggleSubpixelVectors" style="margin-right: 4px;" />
+              <span>Sub-Pixel Quiver (&times;8)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="viewer-canvas-wrapper">
+          <canvas id="matchesCanvas" class="main-canvas"></canvas>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Registration Results & Overlays -->
+      <div id="registrationSection" class="card viewport-card" style="display: none;">
+        <div class="viewer-header">
+          <div class="viewer-title">
+            <i class="fa-solid fa-eye text-cyan"></i>
+            <span>Registration Alignment Inspector</span>
+          </div>
+
+          <div class="viewer-controls">
+            <div class="view-tabs" style="padding: 2px;">
+              <button id="btnModeSplit" class="tab-btn active" title="Interactive Split Screen Slider">Split</button>
+              <button id="btnModeBlend" class="tab-btn" title="Alpha Blending with Opacity Slider">Alpha Blend</button>
+              <button id="btnModeChecker" class="tab-btn" title="Alternating Checkerboard Tiles">Checkerboard</button>
+              <button id="btnModeDiff" class="tab-btn" title="Residual Difference Heatmap">Residual Heatmap</button>
+              <button id="btnModeWarped" class="tab-btn" title="Registered Source Image">Warped Only</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opacity Slider for Alpha Blend Mode -->
+        <div id="blendOpacityControl" style="display: none; align-items: center; gap: 1rem; margin-bottom: 0.75rem; padding: 0.35rem 0.75rem; background: rgba(0,0,0,0.3); border-radius: var(--radius-sm);">
+          <span style="font-size: 0.75rem; color: var(--text-secondary);">Blend Opacity:</span>
+          <input type="range" id="blendOpacitySlider" class="range-slider" min="0.0" max="1.0" step="0.05" value="0.5" style="max-width: 200px;" />
+          <span id="blendOpacityVal" class="mono text-cyan" style="font-size: 0.75rem;">50%</span>
+        </div>
+
+        <div class="viewer-canvas-wrapper">
+          <div id="regViewerContainer" style="width: 100%; height: 100%;"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: Scientific Telemetry & Metrics -->
+    <aside class="telemetry-panel">
+
+      <!-- KPI Scoreboard -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-chart-line"></i> Primary Verification KPIs</span>
+          <i class="fa-solid fa-shield-halved text-cyan"></i>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card emerald">
+            <span class="kpi-label">Inlier Ratio</span>
+            <span class="kpi-value" id="kpiInlierRatio">--%</span>
+            <span class="kpi-sub" id="kpiInliersCount">-- inliers</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Inlier RMSE</span>
+            <span class="kpi-value" id="kpiRmse">-- <span class="kpi-unit">px</span></span>
+            <span class="kpi-sub">Sub-pixel precision</span>
+          </div>
+
+          <div class="kpi-card orange">
+            <span class="kpi-label">Spatial Coverage</span>
+            <span class="kpi-value" id="kpiCoverage">--%</span>
+            <span class="kpi-sub">8x8 Overlap Bins</span>
+          </div>
+
+          <div class="kpi-card amber">
+            <span class="kpi-label">Sub-Pixel Shift</span>
+            <span class="kpi-value" id="kpiSubpixelShift">-- <span class="kpi-unit">px</span></span>
+            <span class="kpi-sub">NCC Peak Fitted</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 0.75rem;">
+          <div class="kpi-card" style="border-left: 3px solid var(--accent-cyan);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="kpi-label">Pipeline Latency</span>
+              <span class="kpi-value" id="kpiLatency" style="font-size: 1.1rem;">--s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Quantitative Metrics Card -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-square-poll-vertical"></i> Scientific Metrics</span>
+          <span style="font-size: 0.7rem; color: var(--text-muted);">ISRO Standard</span>
+        </div>
+
+        <div class="metric-row">
+          <span class="metric-name">Selected Detector</span>
+          <span class="metric-data" id="metricDetector">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Transformation Model</span>
+          <span class="metric-data text-cyan" id="metricModel">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Mean Reprojection Error</span>
+          <span class="metric-data" id="metricMeanError">-- px</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Median Reprojection Error</span>
+          <span class="metric-data" id="metricMedianError">-- px</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Spatial Shannon Entropy</span>
+          <span class="metric-data" id="metricEntropy">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Occupied Grid Bins</span>
+          <span class="metric-data" id="metricOccupiedCells">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">NCC (Pre &rarr; Post)</span>
+          <span class="metric-data text-emerald" id="metricNccGain">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">SSIM (Pre &rarr; Post)</span>
+          <span class="metric-data text-emerald" id="metricSsimGain">--</span>
+        </div>
+      </div>
+
+      <!-- Stage-by-Stage Latency Breakdown -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-stopwatch"></i> Execution Latency Profile</span>
+          <i class="fa-solid fa-bolt text-cyan"></i>
+        </div>
+
+        <div class="metric-row">
+          <span class="metric-name">Preprocessing</span>
+          <span class="metric-data" id="timePreprocess">-- ms</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Feature Extraction</span>
+          <span class="metric-data" id="timeFeatures">-- ms</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Candidate Matching</span>
+          <span class="metric-data" id="timeMatching">-- ms</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Geometric Verification</span>
+          <span class="metric-data" id="timeRansac">-- ms</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">ANMS Spatial Selection</span>
+          <span class="metric-data" id="timeSpatial">-- ms</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Sub-Pixel Refinement</span>
+          <span class="metric-data" id="timeSubpixel">-- ms</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-name">Image Warping &amp; Blending</span>
+          <span class="metric-data" id="timeWarp">-- ms</span>
+        </div>
+      </div>
+
+      <!-- Export Deliverables -->
+      <div class="card">
+        <div class="card-title">
+          <span><i class="fa-solid fa-file-export"></i> Export Products</span>
+          <i class="fa-solid fa-download"></i>
+        </div>
+
+        <div class="export-row" style="margin-bottom: 0.5rem;">
+          <button id="btnExportCsv" class="btn-secondary" title="Download tie points in GIS/photogrammetry CSV format">
+            <i class="fa-solid fa-file-csv text-cyan"></i> Tie Points CSV
+          </button>
+          <button id="btnExportJson" class="btn-secondary" title="Download tie points in JSON format">
+            <i class="fa-solid fa-code text-cyan"></i> Tie Points JSON
+          </button>
+        </div>
+
+        <button id="btnExportImage" class="btn-secondary" title="Download full-resolution registered image">
+          <i class="fa-solid fa-image text-emerald"></i> Download Registered Image (PNG)
+        </button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Loading State Modal Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingStatusText">Executing multi-modal correspondence pipeline...</div>
+    <div class="loading-subtext">Running SIFT, RANSAC, ANMS Bucketing &amp; Sub-Pixel Refinement</div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="/js/matches.js"></script>
+  <script src="/js/viewer.js"></script>
+  <script src="/js/app.js"></script>
+
+</body>
+</html>
